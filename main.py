@@ -6,150 +6,140 @@ x2min = 5
 x2max = 40
 x3min = 15
 x3max = 25
-xAvmax = x1max+x2max+x3max/3
-xAvmin = x1min+x2min+x3min/3
-ymax = int(200+xAvmax)
-ymin = int(200+xAvmin)
-#print(round(xAvmin,2))
-#print(round(xAvmax,2))
+x_midlle_max = (x1max + x2max + x3max) / 3
+x_midlle_min = (x1min + x2min + x3min) / 3
+y_max = 200 + x_midlle_max
+y_min = 200 + x_midlle_min
 
-#print(round(ymax,2))
-#print(round(ymin,2))
+m, n, q = 3, 4, 0.5
 
+def mtrx(matrix):
+    for i in range(len(matrix)):
+        print("{}.".format(i + 1), end = "")
+        for j in range(len(matrix[i])):
+            print("{:4}".format(matrix[i][j]), end = "")
+        print()
 
-print("Кодованє значення X")
-print("{:<5} {:<5} {:<5} {:<5}".format("№","X1","X2","X3"))
-X11 = ["-1", "-1", "+1", "+1"]
-X22 = ["-1", "+1", "-1", "+1"]
-X33 = ["-1", "+1", "+1", "-1"]
-for i in range(4):
-    print("{:<5} {:<5} {:<5} {:<5}".format(i+1,X11[i],X22[i],X33[i]))
+def main(m, n, q):
+    print("\nMatrix of code values")
+    codeX = np.array([[+1, -1, -1, -1], [+1, -1, +1, +1], [+1, +1, -1, +1], [+1, +1, +1, -1]])
+    mtrx(codeX)
 
-print("Матриця для m=3")
-print("{:<5} {:<5} {:<5} {:<5} {:<5} {:<5} {:<5}".format("№","X1","X2","X3","Y1","Y2","Y3"))
-X1 = [x1min, x1min, x1max, x1max]
-X2 = [x2min, x2max, x2min, x2max]
-X3 = [x3min, x3max, x3max, x3min]
-Y1 = [random.randrange(138,247, 1) for i in range(4)]
-Y2 = [random.randrange(138,247, 1) for i in range(4)]
-Y3 = [random.randrange(138,247, 1) for i in range(4)]
-for i in range(4):
-    print("{:<5} {:<5} {:<5} {:<5} {:<5} {:<5} {:<5}".format(i+1,X1[i],X2[i],X3[i],Y1[i],Y2[i],Y3[i]))
+    print("\nX-matrix:")
+    x = np.array([[x1min, x2min, x3min], [x1min, x2max, x3max], [x1max, x2min, x3max], [x1max, x2max, x3min]])
+    mtrx(x)
 
-print("Середнє значення відгуку функції за рядками ")
-y1av1 = (Y1[0]+Y2[0]+Y3[0])/3
-y2av2 = (Y1[1]+Y2[1]+Y3[1])/3
-y3av3 = (Y1[2]+Y2[2]+Y3[2])/3
-y4av4 = (Y1[3]+Y2[3]+Y3[3])/3
+    print("\nY-matrix:")
+    y = np.random.randint(y_min, y_max, size = (n, m))
+    mtrx(y)
 
-mx1 = sum(X1)/4
-mx2 = sum(X2)/4
-mx3 = sum(X3)/4
+    print("\nAverage of the response features:")
+    y_midlle = np.sum(y, axis = 1) / len(y[0])
+    y_1, y_2, y_3, y_4 = y_midlle
+    print(f"y_1 = {y_1:.2f}\ny_2 = {y_2:.2f}\ny_3 = {y_3:.2f}\ny_4 = {y_4:.2f}")
+    mx_1, mx_2, mx_3 = [i / len(x) for i in np.sum(x, axis = 0)]
+    my = sum(y_midlle) / len(y_midlle)
 
-my = (y1av1 + y2av2 + y3av3 + y4av4)/4
+    a_1 = sum([x[i][0] * y_midlle[i] for i in range(len(x))]) / len(x)
+    a_2 = sum([x[i][1] * y_midlle[i] for i in range(len(x))]) / len(x)
+    a_3 = sum([x[i][2] * y_midlle[i] for i in range(len(x))]) / len(x)
 
-a1 = (X1[0]*y1av1 + X1[1]*y2av2 + X1[2]*y3av3 + X1[3]*y4av4)/4
-a2 = (X2[0]*y1av1 + X2[1]*y2av2 + X2[2]*y3av3 + X2[3]*y4av4)/4
-a3 = (X3[0]*y1av1 + X3[1]*y2av2 + X3[2]*y3av3 + X3[3]*y4av4)/4
+    a_11 = sum([x[i][0] ** 2 for i in range(len(x))]) / len(x)
+    a_22 = sum([x[i][1] ** 2 for i in range(len(x))]) / len(x)
+    a_33 = sum([x[i][2] ** 2 for i in range(len(x))]) / len(x)
+    a_12 = sum([x[i][0] * x[i][1] for i in range(len(x))]) / len(x)
+    a_13 = sum([x[i][0] * x[i][2] for i in range(len(x))]) / len(x)
+    a_23 = a_32 = sum([x[i][1] * x[i][2] for i in range(len(x))]) / len(x)
 
-a11 = (X1[0]*X1[0] + X1[1]*X1[1] + X1[2]*X1[2] + X1[3]*X1[3])/4
-a22 = (X2[0]*X2[0] + X2[1]*X2[1] + X2[2]*X2[2] + X2[3]*X2[3])/4
-a33 = (X3[0]*X3[0] + X3[1]*X3[1] + X3[2]*X3[2] + X3[3]*X3[3])/4
-a12 = a21 = (X1[0]*X2[0] + X1[1]*X2[1] + X1[2]*X2[2] + X1[3]*X2[3])/4
-a13 = a31 = (X1[0]*X3[0] + X1[1]*X3[1] + X1[2]*X3[2] + X1[3]*X3[3])/4
-a23 = a32 = (X2[0]*X3[0] + X2[1]*X3[1] + X2[2]*X3[2] + X2[3]*X3[3])/4
+    det = np.linalg.det([[1, mx_1, mx_2, mx_3], [mx_1, a_11, a_12, a_13], [mx_2, a_12, a_22, a_32], [mx_3, a_13, a_23, a_33]])
+    det_0 = np.linalg.det([[my, mx_1, mx_2, mx_3], [a_1, a_11, a_12, a_13], [a_2, a_12, a_22, a_32], [a_3, a_13, a_23, a_33]])
+    det_1 = np.linalg.det([[1, my, mx_2, mx_3], [mx_1, a_1, a_12, a_13], [mx_2, a_2, a_22, a_32], [mx_3, a_3, a_23, a_33]])
+    det_2 = np.linalg.det([[1, mx_1, my, mx_3], [mx_1, a_11, a_1, a_13], [mx_2, a_12, a_2, a_32], [mx_3, a_13, a_3, a_33]])
+    det_3 = np.linalg.det([[1, mx_1, mx_2, my], [mx_1, a_11, a_12, a_1], [mx_2, a_12, a_22, a_2], [mx_3, a_13, a_23, a_3]])
 
-b01 = np.array([[my, mx1, mx2, mx3], [a1, a11, a12, a13], [a2, a12, a22, a32], [a3, a13, a23, a33]])
-b02 = np.array([[1, mx1, mx2, mx3], [mx1, a11, a12, a13], [mx2, a12, a22, a32], [mx3, a13, a23, a33]])
-b0 = np.linalg.det(b01)/np.linalg.det(b02)
+    b_0 = det_0 / det
+    b_1 = det_1 / det
+    b_2 = det_2 / det
+    b_3 = det_3 / det
+    b = [b_0, b_1, b_2, b_3]
 
-b11 = np.array([[1, my, mx2, mx3], [mx1, a1, a12, a13], [mx2, a2, a22, a32], [mx3, a3, a23, a33]])
-b12 = np.array([[1, mx1, mx2, mx3], [mx1, a11, a12, a13], [mx2, a12, a22, a32], [mx3, a13, a23, a33]])
-b1 = np.linalg.det(b11)/np.linalg.det(b12)
+    print("\nThe normalized regression equation: y = {0} + {1} * x1 + {2} * x2 + {3} * x3\n".format(round(b_0, 5), round(b_1, 5), round(b_2, 5), round(b_3, 5)))
 
-b21 = np.array([[1, mx1, my, mx3], [mx1, a11, a1, a13], [mx2, a12, a2, a32], [mx3, a13, a3, a33]])
-b22 = np.array([[1, mx1, mx2, mx3], [mx1, a11, a12, a13], [mx2, a12, a22, a32], [mx3, a13, a23, a33]])
-b2 = np.linalg.det(b21)/np.linalg.det(b22)
+    print("Audit:")
+    y_1_exp = b_0 + b_1 * x[0][0] + b_2 * x[0][1] + b_3 * x[0][2]
+    y_2_exp = b_0 + b_1 * x[1][0] + b_2 * x[1][1] + b_3 * x[1][2]
+    y_3_exp = b_0 + b_1 * x[2][0] + b_2 * x[2][1] + b_3 * x[2][2]
+    y_4_exp = b_0 + b_1 * x[3][0] + b_2 * x[3][1] + b_3 * x[3][2]
+    print(f"y_1 = {b_0:.3f} + {b_1:.3f} * {x[0][0]} + {b_2:.3f} * {x[0][1]} + {b_3:.3f} * {x[0][2]} = {y_1_exp:.3f}"
+          f"\ny_2 = {b_0:.3f} + {b_1:.3f} * {x[1][0]} + {b_2:.3f} * {x[1][1]} + {b_3:.3f} * {x[1][2]} = {y_2_exp:.3f}"
+          f"\ny_3 = {b_0:.3f} + {b_1:.3f} * {x[2][0]} + {b_2:.3f} * {x[2][1]} + {b_3:.3f} * {x[2][2]} = {y_3_exp:.3f}"
+          f"\ny_4 = {b_0:.3f} + {b_1:.3f} * {x[3][0]} + {b_2:.3f} * {x[3][1]} + {b_3:.3f} * {x[3][2]} = {y_4_exp:.3f}")
 
-b31 = np.array([[1, mx1, mx2, my], [mx1, a11, a12, a1], [mx2, a12, a22, a2], [mx3, a13, a23, a3]])
-b32 = np.array([[1, mx1, mx2, mx3], [mx1, a11, a12, a13], [mx2, a12, a22, a32], [mx3, a13, a23, a33]])
-b3 = np.linalg.det(b31)/np.linalg.det(b32)
+    print("\n[ Kohren's test ]")
+    f_1 = m - 1
+    f_2 = n
+    s_1 = sum([(i - y_1) ** 2 for i in y[0]]) / m
+    s_2 = sum([(i - y_2) ** 2 for i in y[1]]) / m
+    s_3 = sum([(i - y_3) ** 2 for i in y[2]]) / m
+    s_4 = sum([(i - y_4) ** 2 for i in y[3]]) / m
+    s_array = np.array([s_1, s_2, s_3, s_4])
+    gP = max(s_array) / sum(s_array)
 
-print("y1av1="+str(round(b0 + b1*X1[0] + b2*X2[0] + b3*X3[0],2))+"="+ str(round(y1av1,2)))
-print("y2av2="+str(round(b0 + b1*X1[1] + b2*X2[1] + b3*X3[1],2))+"="+ str(round(y2av2,2)))
-print("y3av3="+str(round(b0 + b1*X1[2] + b2*X2[2] + b3*X3[2],2))+"="+ str(round(y3av3,2)))
-print("y4av4="+str(round(b0 + b1*X1[3] + b2*X2[3] + b3*X3[3],2))+"="+ str(round(y4av4,2)))
-print("Значення співпадають")
+    table = {3: 0.6841, 4: 0.6287, 5: 0.5892, 6: 0.5598, 7: 0.5365, 8: 0.5175, 9: 0.5017, 10: 0.4884, range(11, 17): 0.4366, range(17, 37): 0.3720, range(37, 145): 0.3093}
+    gT = table.get(m)
 
-print("Дисперсія по рядкам")
-d1 = ((Y1[0] - y1av1)**2 + (Y2[0] - y2av2)**2 + (Y3[0] - y3av3)**2)/3
-d2 = ((Y1[1] - y1av1)**2 + (Y2[1] - y2av2)**2 + (Y3[1] - y3av3)**2)/3
-d3 = ((Y1[2] - y1av1)**2 + (Y2[2] - y2av2)**2 + (Y3[2] - y3av3)**2)/3
-d4 = ((Y1[3] - y1av1)**2 + (Y2[3] - y2av2)**2 + (Y3[3] - y3av3)**2)/3
-print("d1=", round(d1,2),"d2=", round(d2,2),"d3=", round(d3,2),"d4=", round(d4,2))
+    if(gP < gT):
+        print(f"The variance is homogeneous: Gp = {gP:.5} < Gt = {gT}")
+    else:
+        print(f"The variance is not homogeneous Gp = {gP:.5} < Gt = {gT}")
+        m = m + 1
+        main(m + 1, n, q)
+        return
 
-dcouple = [d1, d2, d3, d4]
+    print("\n[ Student's test ]")
+    s2_B = s_array.sum() / n
+    s2_beta_S = s2_B / (n * m)
+    s_beta_S = pow(s2_beta_S, 1/2)
 
-m = 3
-Gp = max(dcouple)/sum(dcouple)
-f1 = m-1
-f2 = N = 4
-Gt = 0.7679
-if Gp < Gt:
-    print("Дисперсія однорідна")
-else:
-    print("Дисперсія  неоднорідна")
-print("Критерій Стьюдента")
-sb = sum(dcouple)/N
-ssbs = sb/N*m
-sbs = ssbs**0.5
+    beta_0 = sum([codeX[i][0] * y_midlle[i] for i in range(len(codeX))]) / n
+    beta_1 = sum([codeX[i][1] * y_midlle[i] for i in range(len(codeX))]) / n
+    beta_2 = sum([codeX[i][2] * y_midlle[i] for i in range(len(codeX))]) / n
+    beta_3 = sum([codeX[i][3] * y_midlle[i] for i in range(len(codeX))]) / n
 
-beta0 = (y1av1*1 + y2av2*1 + y3av3*1 + y4av4*1)/4
-beta1 = (y1av1*(-1) + y2av2*(-1) + y3av3*1 + y4av4*1)/4
-beta2 = (y1av1*(-1) + y2av2*1 + y3av3*(-1) + y4av4*1)/4
-beta3 = (y1av1*(-1) + y2av2*1 + y3av3*1 + y4av4*(-1))/4
+    t = [abs(beta_0) / s_beta_S, abs(beta_1) / s_beta_S, abs(beta_2) / s_beta_S, abs(beta_3) / s_beta_S ]
 
-t0 = abs(beta0)/sbs
-t1 = abs(beta1)/sbs
-t2 = abs(beta2)/sbs
-t3 = abs(beta3)/sbs
+    f3 = f_1 * f_2
+    t_table = {8: 2.306, 9: 2.262, 10: 2.228, 11: 2.201, 12: 2.179, 13: 2.160, 14: 2.145, 15: 2.131, 16: 2.120, 17: 2.110, 18: 2.101, 19: 2.093, 20: 2.086, 21: 2.08, 22: 2.074, 23: 2.069, 24: 2.064, 25: 2.06}
+    d = 4
 
-#print(t0,t1,t2,t3)
+    for i in range(len(t)):
+        if(t_table.get(f3) > t[i]):
+            b[i] = 0
+            d -= 1
 
-f3 = f1*f2
-ttabl  = 2.306
-print("f3 = f1*f2, з таблиці tтабл = 2.306")
-#print(t0,t1,t2,t3)
-if (t0<ttabl):
-    print("t0<ttabl, b0 не значимий")
-    b0=0
-if (t1<ttabl):
-    print("t1<ttabl, b1 не значимий")
-    b1=0
-if (t2<ttabl):
-    print("t2<ttabl, b2 не значимий")
-    b2=0
-if (t3<ttabl):
-    print("t3<ttabl, b3 не значимий")
-    b3=0
+    print(f"Regression equation: y = {b[0]:.3f} + {b[1]:.3f} * x1 + {b[2]:.3f} * x2 + {b[3]:.3f} * x3")
+    check_0 = b[0] + b[1] * x[0][0] + b[2] * x[0][1] + b[3] * x[0][2]
+    check_1 = b[0] + b[1] * x[1][0] + b[2] * x[1][1] + b[3] * x[1][2]
+    check_2 = b[0] + b[1] * x[2][0] + b[2] * x[2][1] + b[3] * x[2][2]
+    check_3 = b[0] + b[1] * x[3][0] + b[2] * x[3][1] + b[3] * x[3][2]
+    ckeck_list = [check_0, check_1, check_2, check_3]
+    print("Values are normalized: ", ckeck_list)
 
-yy1 = b0 + b1*x1min + b2*x2min + b3*x3min
-yy2 = b0 + b1*x1min + b2*x2max + b3*x3max
-yy3 = b0 + b1*x1max + b2*x2min + b3*x3max
-yy4 = b0 + b1*x1max + b2*x2max + b3*x3min
-print("Критерій Фішера")
-d = 2
-print(d," значимих коефіцієнтів")
-f4 = N - d
-#print(f4)
-#print(f3)
-sad = ((yy1 - y1av1)**2 + (yy2 - y2av2)**2 + (yy3 - y3av3)**2 + (yy4 - y4av4)**2)*(m/(N-d))
-Fp = sad/sb
-print("d1=", round(d1,2), "d2=", round(d2,2), "d3=", round(d3,2), "d4=", round(d4,2), "d5=", round(sb,2))
-print("Fp=", round(Fp,2))
-print('Ft берем із таблиці 8 рядяк 2 стовпець Ft = 4.5')
-Ft=4.5
-if Fp>Ft:
-    print("Fp=",round(Fp,2),">Ft",Ft,"Рівняння неадекватно оригіналу")
-else:
-    print("Fp=",round(Fp,2),"<Ft",Ft,"Рівняння адекватно оригіналу")
+    print("\n[ Fisher's test ]")
+    f_4 = n - d
+    s2_ad = m / f_4 * sum([(ckeck_list[i] - y_midlle[i]) ** 2 for i in range(len(y_midlle))])
+    fP = s2_ad / s2_B
+    fT = [[164.4, 199.5, 215.7, 224.6, 230.2, 234], [18.5, 19.2, 19.2, 19.3, 19.3, 19.3],
+         [10.1, 9.6, 9.3, 9.1, 9, 8.9], [7.7, 6.9, 6.6, 6.4, 6.3, 6.2], [6.6, 5.8, 5.4, 5.2, 5.1, 5],
+		 [6, 5.1, 4.8, 4.5, 4.4, 4.3], [5.5, 4.7, 4.4, 4.1, 4, 3.9], [5.3, 4.5, 4.1, 3.8, 3.7, 3.6],
+		 [5.1, 4.3, 3.9, 3.6, 3.5, 3.4], [5, 4.1, 3.7, 3.5, 3.3, 3.2], [4.8, 4, 3.6, 3.4, 3.2, 3.1],
+		 [4.8, 3.9, 3.5, 3.3, 3.1, 3], [4.7, 3.8, 3.4, 3.2, 3, 2.9], [4.6, 3.7, 3.3, 3.1, 3, 2.9],
+		 [4.5, 3.7, 3.3, 3.1, 2.9, 2.8], [4.5, 3.6, 3.2, 3, 2.9, 2.7], [4.5, 3.6, 3.2, 3, 2.8, 2.7],
+		 [4.4, 3.6, 3.2, 2.9, 2.8, 2.7], [4.4, 3.5, 3.1, 2.9, 2.7, 2.6], [4.4, 3.5, 3.1, 2.9, 2.7, 2.6]]
+    if(fP > fT[f3][f_4]):
+        print(f"fp = {fP} > ft = {fT[f3][f_4]}.\nThe mathematical model is not adequate to the experimental data\n")
+    else:
+    	print(f"fP = {fP} < fT = {fT}.\nThe mathematical model is adequate to the experimental data\n")
+
+print("\nRegression equation --- y = b_0 + b_1 * x1 + b_1 * x2 +b_3 * x3")
+main(m, n, q)
